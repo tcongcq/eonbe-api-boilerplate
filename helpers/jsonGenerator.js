@@ -1,8 +1,8 @@
 let CODE = require('../helpers/statusCode');
 
 class Status {
-    get(success, code, message, error) {
-        return { success: success, code: code, message: message, data: null, error: true, errors: [] };
+    get(success, code, message, err) {
+        return { success: success, code: code, message: message, data: null, error: err!=undefined?err:true, errors: [] };
     }
     badRequest(message) {
         return this.get(false, CODE.BAD_REQUEST, message || 'Bad request');

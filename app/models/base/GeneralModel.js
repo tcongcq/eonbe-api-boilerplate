@@ -26,13 +26,13 @@ self.getPaginateOptDefault = function(_paginateOpts){
     options._typeGet = (_paginateOpts && _paginateOpts._typeGet) ? _paginateOpts._typeGet : "LESS";
     return Object.assign(_paginateOpts, options);
 };
-self.beforeCreate 	= function(data){ return data; };
-self.beforeUpdate 	= function(data){ return data; };
-self.beforeDelete 	= function(data){ return data; };
-self.beforeGetData 	= function(docs){ return docs; };
-self.afterCreate 	= function(data){ return data; };
-self.afterUpdate 	= function(data){ return data; };
-self.afterDelete 	= function(data){ return data; };
+self.beforeCreate 	= async function(data){ return data; };
+self.beforeUpdate 	= async function(data){ return data; };
+self.beforeDelete 	= async function(data){ return data; };
+self.beforeGetData 	= async function(docs){ return docs; };
+self.afterCreate 	= async function(data){ return data; };
+self.afterUpdate 	= async function(data){ return data; };
+self.afterDelete 	= async function(data){ return data; };
 
 self.afterGetData 	= function(_docs, _type){
 	return new Promise(async (resolve, reject) => {
@@ -93,11 +93,11 @@ class GeneralModel {
 	async createRow(_request){
 		try {
 			let _self   = this.Schema;
-			let request = this.beforeCreate(_request);
+			let request = await this.beforeCreate(_request);
 			let objData = await _self.create(new _self(request));
 			let created = Object.assign(objData.toJSON(), {_id: objData._id});
 			let _responseJson   = JsonGenerator.status.success(StatusCode.SUCCESS, 'Successfully');
-	        _responseJson.data  = this.afterCreate(created);
+	        _responseJson.data  = await this.afterCreate(created);
 		    return _responseJson;
 		} catch (err) {
 			let _responseJson   = JsonGenerator.status.failure();
@@ -112,7 +112,7 @@ class GeneralModel {
 			let curObj	= await this.findRow(_where);
 			if (!curObj)
 	            return JsonGenerator.status.failure(StatusCode.FAILURE, 'No data found');
-		    let update 	= this.beforeUpdate(_update);
+		    let update 	= await this.beforeUpdate(_update);
 	        let _responseJson 	= JsonGenerator.status.success(StatusCode.SUCCESS, 'Successfully');
     		let updateMany = await _self.updateMany(_where, update);
             _responseJson.data = await this.findRow(_where);
@@ -128,7 +128,7 @@ class GeneralModel {
 	    try {
 	    	let _self       = this.Schema;
 		    let time_now    = Date.now();
-		    _where = this.beforeDelete(_where);
+		    _where = await this.beforeDelete(_where);
 		    let rs = await _self.deleteOne(_where);
 		    if (rs.ok)
 		    	return await this.afterDelete(rs);

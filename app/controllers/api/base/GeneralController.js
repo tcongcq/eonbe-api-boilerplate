@@ -64,7 +64,7 @@ var GeneralController = function(_options){
 	            pagiOptions.sort = sort;
 	        }
 	        Object.assign(pagiOptions, {_typeGet: (request.typeGet || 'LESS')});
-	        var {_where, pagiOptions} = await self.beforeGetData(_where, pagiOptions);
+	        var {_where, pagiOptions} = await self.beforeGetData(_where, pagiOptions, req);
 	        let dataList 	= await self.mainModel.getRows(_where, pagiOptions);
 	        let resData 	= await self.afterGetData(dataList)
 	        if (!resData.success)
